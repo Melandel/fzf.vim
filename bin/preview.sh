@@ -44,7 +44,7 @@ if [ -z "$FZF_PREVIEW_COMMAND" ] && command -v bat > /dev/null; then
   bat --style="${BAT_STYLE:-numbers}" --color=always --pager=never \
       --line-range=$FIRST:$LAST --highlight-line=$CENTER "$FILE"
 	elif [ -d "$FILE" ]; then
-		tree -C -L 1 "$FILE" --noreport | tail -n +2
+		tree -C -L 1 "$FILE" --noreport
 	fi
  exit $?
 fi
