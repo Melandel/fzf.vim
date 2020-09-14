@@ -30,7 +30,7 @@ fi
 
 FILE_LENGTH=${#FILE}
 MIME=$(file --dereference --mime "$FILE")
-if [[ "${MIME:FILE_LENGTH}" =~ binary ]]; then
+if [[ "${MIME:FILE_LENGTH}" =~ binary && ! "${MIME:FILE_LENGTH}" =~ directory ]]; then
   echo "$MIME"
   exit 0
 fi
@@ -40,9 +40,13 @@ if [ -z "$CENTER" ]; then
 fi
 
 if [ -z "$FZF_PREVIEW_COMMAND" ] && command -v bat > /dev/null; then
+	if [ -f "$FILE" ]; then
   bat --style="${BAT_STYLE:-numbers}" --color=always --pager=never \
-      --highlight-line=$CENTER "$FILE"
-  exit $?
+      --line-range=$FIRST:$LAST --highlight-line=$CENTER "$FILE"
+	elif [ -d "$FILE" ]; then
+		tree -C -L 1 "$FILE" --noreport | tail -n +2
+	fi
+ exit $?
 fi
 
 DEFAULT_COMMAND="highlight -O ansi -l {} || coderay {} || rougify {} || cat {}"
